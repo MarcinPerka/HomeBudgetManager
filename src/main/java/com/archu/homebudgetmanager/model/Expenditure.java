@@ -13,7 +13,7 @@ public class Expenditure extends Transaction {
     @Column(name = "expenditure_category", columnDefinition = "ENUM('FOOD', 'TRANSPORT', 'PAYMENTS', 'ENTERTAINMENT','HOLIDAYS', 'UNCATEGORIZED')")
     private ExpenditureCategory expenditureCategory;
 
-    public Expenditure(){
+    public Expenditure() {
 
     }
 
@@ -42,6 +42,7 @@ public class Expenditure extends Transaction {
         Expenditure that = (Expenditure) obj;
         return id.equals(that.id);
     }
+
     @Override
     public int hashCode() {
         return id == null ? 0 : id.hashCode();

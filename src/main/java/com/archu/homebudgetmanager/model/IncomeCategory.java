@@ -2,5 +2,5 @@ package com.archu.homebudgetmanager.model;
 
 public enum IncomeCategory {
 
-    STUDY, WORK, PARENTS,UNCATEGORIZED
+    STUDY, WORK, PARENTS, UNCATEGORIZED
 }

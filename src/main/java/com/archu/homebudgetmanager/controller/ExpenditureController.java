@@ -15,37 +15,52 @@ public class ExpenditureController {
     ExpenditureService expenditureService;
 
     @GetMapping("expenditures")
-    public List<Expenditure> getAllExpenditures(){
+    public List<Expenditure> getAllExpenditures() {
         return expenditureService.getAllExpenditures();
     }
 
     @GetMapping("expenditures/{id}")
-    public Expenditure getExpenditureById(@PathVariable Integer id){
+    public Expenditure getExpenditureById(@PathVariable Integer id) {
         return expenditureService.getExpenditureById(id);
     }
 
+    @GetMapping("expenditures/byCategory")
+    public Map<String, BigDecimal> getSumOfExpendituresByCategory() {
+        return expenditureService.getSumOfExpendituresByCategory();
+    }
+
+    @GetMapping("expenditures/byCategory/month/{month}")
+    public Map<String, BigDecimal> getSumOfIncomeByMonthAndCategory(@PathVariable Integer month){
+        return expenditureService.getSumOfExpendituresByMonthAndCategory(month);
+    }
+
+    @GetMapping("expenditures/month/{month}")
+    public List<Expenditure> getExpendituresByMonth(@PathVariable Integer month) {
+        return expenditureService.getExpendituresByMonth(month);
+    }
+
+    @GetMapping("expendituresSum")
+    public BigDecimal getSumOfExpenditures() {
+        return expenditureService.getSumOfExpenditures();
+    }
+
+    @GetMapping("expendituresSum/month/{month}")
+    public BigDecimal getSumOfExpendituresByMonth(@PathVariable Integer month) {
+        return expenditureService.getSumOfExpendituresByMonth(month);
+    }
+
     @DeleteMapping("expenditures/{id}")
-    public void deleteExpenditureById(@PathVariable Integer id){
+    public void deleteExpenditureById(@PathVariable Integer id) {
         expenditureService.deleteExpenditureById(id);
     }
 
     @PostMapping("expenditures/")
-    public void addExpenditure(Expenditure expenditure){
+    public void addExpenditure(Expenditure expenditure) {
         expenditureService.addExpenditure(expenditure);
     }
 
     @PutMapping("expenditures/{id}")
-    public void updateExpenditure(Expenditure expenditure, @PathVariable Integer id){
+    public void updateExpenditure(Expenditure expenditure, @PathVariable Integer id) {
         expenditureService.updateExpenditure(expenditure, id);
-    }
-
-    @GetMapping("expenditures/byCategory")
-    public Map<String, BigDecimal> getSumOfExpendituresByCategory(){
-        return expenditureService.getSumOfExpendituresByCategory();
-    }
-
-    @GetMapping("expenditures/month/{month}")
-    public List<Expenditure> getExpenditureByMonth(@PathVariable Integer month){
-        return expenditureService.getExpenditureByMonth(month);
     }
 }

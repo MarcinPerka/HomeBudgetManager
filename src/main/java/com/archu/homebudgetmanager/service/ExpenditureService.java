@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ExpenditureService {
@@ -24,6 +27,36 @@ public class ExpenditureService {
         return expenditureRepository.findById(id).orElse(null);
     }
 
+    public List<Expenditure> getExpendituresByMonth(Integer month) {
+        return expenditureRepository.findExpenditureByMonth(month);
+    }
+
+    public Map<String, BigDecimal> getSumOfExpendituresByCategory() {
+        Map<String, BigDecimal> sumExpenditureByCategory = new HashMap<>();
+        List<Expenditure> expenditures = expenditureRepository.findAll();
+        expenditures.forEach((expenditure) -> {
+            if (sumExpenditureByCategory.containsKey(expenditure.getExpenditureCategory().name())) {
+                sumExpenditureByCategory.put(expenditure.getExpenditureCategory().name(), sumExpenditureByCategory.get(expenditure.getExpenditureCategory().name()).add(expenditure.getAmount()));
+            } else {
+                sumExpenditureByCategory.put(expenditure.getExpenditureCategory().name(), new BigDecimal(String.valueOf(expenditure.getAmount())));
+            }
+
+        });
+        return sumExpenditureByCategory;
+    }
+
+    public BigDecimal getSumOfExpenditures() {
+        return expenditureRepository.findSumOfExpenditures();
+    }
+
+    public BigDecimal getSumOfExpendituresByMonth(Integer month) {
+        return expenditureRepository.findSumOfExpendituresByMonth(month);
+    }
+
+    public Map<String, BigDecimal> getSumOfExpendituresByMonthAndCategory(Integer month) {
+        return new HashMap<>();// #TODO
+    }
+
     public void addExpenditure(Expenditure expenditure) {
         expenditureRepository.save(expenditure);
     }
@@ -37,37 +70,8 @@ public class ExpenditureService {
 
         if (expenditureToUpdate == null)
 
-        expenditure.setId(id);
+            expenditure.setId(id);
         expenditureRepository.save(expenditure);
     }
 
-    public List<Expenditure> getExpenditureByMonth(Integer month){
-        List<Expenditure> expenditures = new ArrayList<>();
-        List<Expenditure> expendituresByMonth = new ArrayList<>();
-        expenditureRepository.findAll().forEach(expenditures::add);
-        expenditures.forEach((expenditure -> {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(expenditure.getDateOfTransaction());
-            int monthExpenditure = calendar.get(Calendar.MONTH);
-            if(monthExpenditure == month)
-                expendituresByMonth.add(expenditure);
-
-        }));
-        return expendituresByMonth;
-    }
-    public Map<String, BigDecimal> getSumOfExpendituresByCategory() {
-        Map<String, BigDecimal> sumExpenditureByCategory = new HashMap<>();
-        List<Expenditure> expenditures = new ArrayList<>();
-        expenditureRepository.findAll().forEach(expenditures::add);
-        expenditures.forEach((expenditure) -> {
-            if (sumExpenditureByCategory.containsKey(expenditure.getExpenditureCategory().name())) {
-                sumExpenditureByCategory.put(expenditure.getExpenditureCategory().name(), sumExpenditureByCategory.get(expenditure.getExpenditureCategory().name()).add(expenditure.getAmount()));
-            } else {
-                sumExpenditureByCategory.put(expenditure.getExpenditureCategory().name(), new BigDecimal(String.valueOf(expenditure.getAmount())));
-            }
-
-        });
-        return sumExpenditureByCategory;
-
-    }
 }
