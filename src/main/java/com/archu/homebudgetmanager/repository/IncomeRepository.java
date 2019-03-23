@@ -19,6 +19,6 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> {
     @Query("SELECT SUM(i.amount) FROM Income i")
     public BigDecimal findSumOfIncomes();
 
-    @Query("SELECT SUM(i.amount) FROM Income i WHERE FUNCTION('MONTH', i.dateOfTransaction) =?1")
+    @Query("SELECT COALESCE(SUM(i.amount),0) FROM Income i WHERE FUNCTION('MONTH', i.dateOfTransaction) =?1")
     public BigDecimal findSumOfIncomesByMonth(Integer month);
 }

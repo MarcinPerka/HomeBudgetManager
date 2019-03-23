@@ -6,8 +6,11 @@ import com.archu.homebudgetmanager.repository.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BalanceService {
@@ -23,5 +26,10 @@ public class BalanceService {
         expenditureRepository.findAll()
                 .forEach(transactions::add);
         return transactions;
+    }
+
+    public BigDecimal getBalanceByMonth(Integer month) {
+        return incomeRepository.findSumOfIncomesByMonth(month)
+                .subtract(expenditureRepository.findSumOfExpendituresByMonth(month));
     }
 }

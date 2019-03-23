@@ -18,6 +18,6 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Intege
     @Query("SELECT SUM(e.amount) FROM Expenditure e")
     public BigDecimal findSumOfExpenditures();
 
-    @Query("SELECT SUM(e.amount) FROM Expenditure e WHERE FUNCTION('MONTH', e.dateOfTransaction) =?1")
+    @Query("SELECT COALESCE(SUM(e.amount),0) FROM Expenditure e WHERE FUNCTION('MONTH', e.dateOfTransaction) =?1")
     public BigDecimal findSumOfExpendituresByMonth(Integer month);
 }
