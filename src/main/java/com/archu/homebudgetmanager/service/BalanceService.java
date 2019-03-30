@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BalanceService {
@@ -19,17 +17,21 @@ public class BalanceService {
     @Autowired
     IncomeRepository incomeRepository;
 
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions(Long userId) {
         List<Transaction> transactions = new ArrayList<>();
-        incomeRepository.findAll()
+        incomeRepository.findByUserId(userId)
                 .forEach(transactions::add);
-        expenditureRepository.findAll()
+        expenditureRepository.findByUserId(userId)
                 .forEach(transactions::add);
         return transactions;
     }
 
-    public BigDecimal getBalanceByMonth(Integer month) {
-        return incomeRepository.findSumOfIncomesByMonth(month)
-                .subtract(expenditureRepository.findSumOfExpendituresByMonth(month));
+    public BigDecimal getBalanceByMonth(Long userId, Integer month) {
+        return incomeRepository.findSumOfIncomesByMonth(userId, month)
+                .subtract(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(userId, month));
+    }
+
+    public BigDecimal getTotalBalance(Long userId) {
+        return incomeRepository.findSumOfIncomesByUserId(userId).subtract(expenditureRepository.findSumOfExpendituresByUserId(userId));
     }
 }

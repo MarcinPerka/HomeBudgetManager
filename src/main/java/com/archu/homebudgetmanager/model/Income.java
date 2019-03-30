@@ -1,12 +1,15 @@
 package com.archu.homebudgetmanager.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
 @Table(name = "income")
 public class Income extends Transaction {
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "income_category", columnDefinition = "ENUM('STUDY', 'WORK','PARENTS', 'UNCATEGORIZED')")
     private IncomeCategory incomeCategory;

@@ -2,6 +2,7 @@ package com.archu.homebudgetmanager.model;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -9,6 +10,7 @@ import java.util.Date;
 @Table(name = "expenditure")
 public class Expenditure extends Transaction {
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "expenditure_category", columnDefinition = "ENUM('FOOD', 'TRANSPORT', 'PAYMENTS', 'ENTERTAINMENT','HOLIDAYS', 'UNCATEGORIZED')")
     private ExpenditureCategory expenditureCategory;

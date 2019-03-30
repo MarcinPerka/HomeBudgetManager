@@ -16,24 +16,24 @@ public class IncomeService {
     @Autowired
     IncomeRepository incomeRepository;
 
-    public List<Income> getAllIncomes() {
+    public List<Income> getAllIncomes(Long userId) {
         List<Income> incomes = new ArrayList<>();
-        incomeRepository.findAll()
+        incomeRepository.findByUserId(userId)
                 .forEach(incomes::add);
         return incomes;
     }
 
-    public Income getIncomeById(Integer id) {
-        return incomeRepository.findById(id).orElse(null);
+    public Income getIncomeById(Long userId, Long id) {
+        return incomeRepository.findByUserIdAndId(userId, id);
     }
 
-    public List<Income> getIncomesByMonth(Integer month) {
-        return incomeRepository.findIncomeByMonth(month);
+    public List<Income> getIncomesByMonth(Long userId, Integer month) {
+        return incomeRepository.findIncomeByUserIdAndMonth(userId, month);
     }
 
-    public Map<String, BigDecimal> getSumOfIncomesByCategory() {
+    public Map<String, BigDecimal> getSumOfIncomesByCategory(Long userId) {
         Map<String, BigDecimal> sumIncomeByCategory = new HashMap<>();
-        List<Income> incomes = incomeRepository.findAll();
+        List<Income> incomes = incomeRepository.findByUserId(userId);
         incomes.forEach((income) -> {
             if (sumIncomeByCategory.containsKey(income.getIncomeCategory().name())) {
                 sumIncomeByCategory.put(income.getIncomeCategory().name(), sumIncomeByCategory.get(income.getIncomeCategory().name()).add(income.getAmount()));
@@ -45,24 +45,23 @@ public class IncomeService {
         return sumIncomeByCategory;
     }
 
-    public BigDecimal getSumOfIncomes() {
-        return incomeRepository.findSumOfIncomes();
+    public BigDecimal getSumOfIncomes(Long userId) {
+        return incomeRepository.findSumOfIncomesByUserId(userId);
     }
 
-    public BigDecimal getSumOfIncomesByMonth(Integer month) {
-        return incomeRepository.findSumOfIncomesByMonth(month);
+    public BigDecimal getSumOfIncomesByMonth(Long userId, Integer month) {
+        return incomeRepository.findSumOfIncomesByMonth(userId, month);
     }
 
-    public Map<String, BigDecimal> getSumOfIncomesByMonthAndCategory(Integer month) {
+    public Map<String, BigDecimal> getSumOfIncomesByMonthAndCategory(Long userId, Integer month) {
         Map<String, BigDecimal> sumIncomeByMonthAndCategory = new HashMap<>();
-        List<Income> incomes = getIncomesByMonth(month);
+        List<Income> incomes = getIncomesByMonth(userId, month);
         incomes.forEach((income) -> {
             if (sumIncomeByMonthAndCategory.containsKey(income.getIncomeCategory().name())) {
                 sumIncomeByMonthAndCategory.put(income.getIncomeCategory().name(), sumIncomeByMonthAndCategory.get(income.getAmount()));
             } else {
                 sumIncomeByMonthAndCategory.put(income.getIncomeCategory().name(), new BigDecimal(String.valueOf(income.getAmount())));
             }
-
         });
         return sumIncomeByMonthAndCategory;
     }
@@ -71,11 +70,11 @@ public class IncomeService {
         incomeRepository.save(income);
     }
 
-    public void deleteIncomeById(Integer id) {
+    public void deleteIncomeById(Long id) {
         incomeRepository.deleteById(id);
     }
 
-    public void updateIncome(Income income, Integer id) {
+    public void updateIncome(Income income, Long id) {
         Income incomeToUpdate = incomeRepository.findById(id).orElse(null);
 
         if (incomeToUpdate == null)

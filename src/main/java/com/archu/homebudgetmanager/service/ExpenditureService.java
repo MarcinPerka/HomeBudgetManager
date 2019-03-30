@@ -16,24 +16,24 @@ public class ExpenditureService {
     @Autowired
     ExpenditureRepository expenditureRepository;
 
-    public List<Expenditure> getAllExpenditures() {
+    public List<Expenditure> getAllExpenditures(Long userId) {
         List<Expenditure> expenditures = new ArrayList<>();
-        expenditureRepository.findAll()
+        expenditureRepository.findByUserId(userId)
                 .forEach(expenditures::add);
         return expenditures;
     }
 
-    public Expenditure getExpenditureById(Integer id) {
-        return expenditureRepository.findById(id).orElse(null);
+    public Expenditure getExpenditureById(Long userId, Long id) {
+        return expenditureRepository.findByUserIdAndId(userId, id);
     }
 
-    public List<Expenditure> getExpendituresByMonth(Integer month) {
-        return expenditureRepository.findExpenditureByMonth(month);
+    public List<Expenditure> getExpendituresByMonth(Long userId, Integer month) {
+        return expenditureRepository.findByUserIdAndMonth(userId, month);
     }
 
-    public Map<String, BigDecimal> getSumOfExpendituresByCategory() {
+    public Map<String, BigDecimal> getSumOfExpendituresByCategory(Long userId) {
         Map<String, BigDecimal> sumExpenditureByCategory = new HashMap<>();
-        List<Expenditure> expenditures = expenditureRepository.findAll();
+        List<Expenditure> expenditures = expenditureRepository.findByUserId(userId);
         expenditures.forEach((expenditure) -> {
             if (sumExpenditureByCategory.containsKey(expenditure.getExpenditureCategory().name())) {
                 sumExpenditureByCategory.put(expenditure.getExpenditureCategory().name(), sumExpenditureByCategory.get(expenditure.getExpenditureCategory().name()).add(expenditure.getAmount()));
@@ -45,27 +45,37 @@ public class ExpenditureService {
         return sumExpenditureByCategory;
     }
 
-    public BigDecimal getSumOfExpenditures() {
-        return expenditureRepository.findSumOfExpenditures();
+    public BigDecimal getSumOfExpenditures(Long userId) {
+        return expenditureRepository.findSumOfExpendituresByUserId(userId);
     }
 
-    public BigDecimal getSumOfExpendituresByMonth(Integer month) {
-        return expenditureRepository.findSumOfExpendituresByMonth(month);
+    public BigDecimal getSumOfExpendituresByMonth(Long userId, Integer month) {
+        return expenditureRepository.findSumOfExpendituresByUserIdAndMonth(userId, month);
     }
 
-    public Map<String, BigDecimal> getSumOfExpendituresByMonthAndCategory(Integer month) {
-        return new HashMap<>();// #TODO
+    public Map<String, BigDecimal> getSumOfExpendituresByMonthAndCategory(Long userId, Integer month) {
+        Map<String, BigDecimal> sumExpendituresByMonthAndCategory = new HashMap<>();
+        List<Expenditure> expenditures = getExpendituresByMonth(userId, month);
+        expenditures.forEach((income) -> {
+            if (sumExpendituresByMonthAndCategory.containsKey(income.getExpenditureCategory().name())) {
+                sumExpendituresByMonthAndCategory.put(income.getExpenditureCategory().name(), sumExpendituresByMonthAndCategory.get(income.getAmount()));
+            } else {
+                sumExpendituresByMonthAndCategory.put(income.getExpenditureCategory().name(), new BigDecimal(String.valueOf(income.getAmount())));
+            }
+
+        });
+        return sumExpendituresByMonthAndCategory;
     }
 
     public void addExpenditure(Expenditure expenditure) {
         expenditureRepository.save(expenditure);
     }
 
-    public void deleteExpenditureById(Integer id) {
+    public void deleteExpenditureById(Long id) {
         expenditureRepository.deleteById(id);
     }
 
-    public void updateExpenditure(Expenditure expenditure, Integer id) {
+    public void updateExpenditure(Expenditure expenditure, Long id) {
         Expenditure expenditureToUpdate = expenditureRepository.findById(id).orElse(null);
 
         if (expenditureToUpdate == null)
@@ -73,5 +83,4 @@ public class ExpenditureService {
             expenditure.setId(id);
         expenditureRepository.save(expenditure);
     }
-
 }

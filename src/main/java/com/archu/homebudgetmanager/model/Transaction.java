@@ -3,6 +3,7 @@ package com.archu.homebudgetmanager.model;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -11,24 +12,31 @@ public abstract class Transaction {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Integer id;
+    protected Long id;
 
+    @NotNull
     @Column(name = "title")
     protected String title;
 
+    @NotNull
     @Column(name = "amount")
     protected BigDecimal amount;
 
+    @NotNull
     @Column(name = "date_of_transaction")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     protected Date dateOfTransaction;
 
-    public Integer getId() {
+    @NotNull
+    @ManyToOne
+    private User user;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -54,5 +62,13 @@ public abstract class Transaction {
 
     public void setDateOfTransaction(Date dateOfTransaction) {
         this.dateOfTransaction = dateOfTransaction;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

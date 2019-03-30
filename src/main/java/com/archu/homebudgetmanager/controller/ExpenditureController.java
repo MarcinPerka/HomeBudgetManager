@@ -1,6 +1,7 @@
 package com.archu.homebudgetmanager.controller;
 
 import com.archu.homebudgetmanager.model.Expenditure;
+import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.service.ExpenditureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,57 +11,60 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/user/{userId}")
 public class ExpenditureController {
     @Autowired
     ExpenditureService expenditureService;
 
-    @GetMapping("expenditures")
-    public List<Expenditure> getAllExpenditures() {
-        return expenditureService.getAllExpenditures();
+    @GetMapping("/expenditures")
+    public List<Expenditure> getAllExpenditures(@PathVariable Long userId) {
+        return expenditureService.getAllExpenditures(userId);
     }
 
-    @GetMapping("expenditures/{id}")
-    public Expenditure getExpenditureById(@PathVariable Integer id) {
-        return expenditureService.getExpenditureById(id);
+    @GetMapping("/expenditures/{id}")
+    public Expenditure getExpenditureById(@PathVariable Long userId, @PathVariable Long id) {
+        return expenditureService.getExpenditureById(userId, id);
     }
 
-    @GetMapping("expenditures/byCategory")
-    public Map<String, BigDecimal> getSumOfExpendituresByCategory() {
-        return expenditureService.getSumOfExpendituresByCategory();
+    @GetMapping("/expenditures/byCategory")
+    public Map<String, BigDecimal> getSumOfExpendituresByCategory(@PathVariable Long userId) {
+        return expenditureService.getSumOfExpendituresByCategory(userId);
     }
 
-    @GetMapping("expenditures/byCategory/month/{month}")
-    public Map<String, BigDecimal> getSumOfIncomeByMonthAndCategory(@PathVariable Integer month){
-        return expenditureService.getSumOfExpendituresByMonthAndCategory(month);
+    @GetMapping("/expenditures/byCategory/month/{month}")
+    public Map<String, BigDecimal> getSumOfExpenditureByMonthAndCategory(@PathVariable Long userId, @PathVariable Integer month) {
+        return expenditureService.getSumOfExpendituresByMonthAndCategory(userId, month);
     }
 
-    @GetMapping("expenditures/month/{month}")
-    public List<Expenditure> getExpendituresByMonth(@PathVariable Integer month) {
-        return expenditureService.getExpendituresByMonth(month);
+    @GetMapping("/expenditures/month/{month}")
+    public List<Expenditure> getExpendituresByMonth(@PathVariable Long userId, @PathVariable Integer month) {
+        return expenditureService.getExpendituresByMonth(userId, month);
     }
 
-    @GetMapping("expendituresSum")
-    public BigDecimal getSumOfExpenditures() {
-        return expenditureService.getSumOfExpenditures();
+    @GetMapping("/sumOfExpenditures")
+    public BigDecimal getSumOfExpenditures(@PathVariable Long userId) {
+        return expenditureService.getSumOfExpenditures(userId);
     }
 
-    @GetMapping("expendituresSum/month/{month}")
-    public BigDecimal getSumOfExpendituresByMonth(@PathVariable Integer month) {
-        return expenditureService.getSumOfExpendituresByMonth(month);
+    @GetMapping("/sumOfExpenditures/month/{month}")
+    public BigDecimal getSumOfExpendituresByMonth(@PathVariable Long userId, @PathVariable Integer month) {
+        return expenditureService.getSumOfExpendituresByMonth(userId, month);
     }
 
-    @DeleteMapping("expenditures/{id}")
-    public void deleteExpenditureById(@PathVariable Integer id) {
+    @DeleteMapping("/expenditures/{id}")
+    public void deleteExpenditureById(@PathVariable Long id) {
         expenditureService.deleteExpenditureById(id);
     }
 
-    @PostMapping("expenditures/")
-    public void addExpenditure(Expenditure expenditure) {
+    @PostMapping("/expenditures/")
+    public void addExpenditure(@PathVariable Long userId, Expenditure expenditure) {
+        expenditure.setUser(new User(userId));
         expenditureService.addExpenditure(expenditure);
     }
 
-    @PutMapping("expenditures/{id}")
-    public void updateExpenditure(Expenditure expenditure, @PathVariable Integer id) {
+    @PutMapping("/expenditures/{id}")
+    public void updateExpenditure(@PathVariable Long userId, Expenditure expenditure, @PathVariable Long id) {
+        expenditure.setUser(new User(userId));
         expenditureService.updateExpenditure(expenditure, id);
     }
 }
