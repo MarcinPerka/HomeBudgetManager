@@ -2,6 +2,7 @@ package com.archu.homebudgetmanager.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
