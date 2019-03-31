@@ -4,7 +4,6 @@ import com.archu.homebudgetmanager.model.Expenditure;
 import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.service.ExpenditureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
