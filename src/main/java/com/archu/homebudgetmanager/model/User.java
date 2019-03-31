@@ -2,26 +2,35 @@ package com.archu.homebudgetmanager.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
+
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
+    @Column(name = "username", unique = true)
     private String username;
 
     @NotNull
+    @Column(name = "password")
     private String password;
 
     @NotNull
+    @Column(name = "email", unique = true)
     private String email;
 
     @NotNull
+    @Column(name = "enabled")
     private boolean enabled = true;
 
     @NotNull
@@ -29,9 +38,11 @@ public class User {
     private boolean credentialsExpired = false;
 
     @NotNull
+    @Column(name = "expired")
     private boolean expired = false;
 
     @NotNull
+    @Column(name = "locked")
     private boolean locked = false;
 
     @ManyToMany(fetch = FetchType.EAGER,
@@ -43,8 +54,7 @@ public class User {
                     name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 
-    public User() {
-
+    User() {
     }
 
     public User(String username, String password, String email) {

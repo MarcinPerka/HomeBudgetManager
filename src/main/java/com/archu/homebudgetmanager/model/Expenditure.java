@@ -3,21 +3,19 @@ package com.archu.homebudgetmanager.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
 @Table(name = "expenditure")
-public class Expenditure extends Transaction{
+public class Expenditure extends Transaction {
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "expenditure_category", columnDefinition = "ENUM('FOOD', 'TRANSPORT', 'PAYMENTS', 'ENTERTAINMENT','HOLIDAYS', 'UNCATEGORIZED')")
     private ExpenditureCategory expenditureCategory;
 
-    public Expenditure() {
-
+    Expenditure() {
     }
 
     public Expenditure(String title, BigDecimal amount, Date dateOfTransaction, ExpenditureCategory expenditureCategory) {

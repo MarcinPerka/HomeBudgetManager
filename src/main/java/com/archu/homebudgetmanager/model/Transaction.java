@@ -4,11 +4,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @MappedSuperclass
-public abstract class Transaction {
+public abstract class Transaction implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,7 +33,8 @@ public abstract class Transaction {
     protected Date dateOfTransaction;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne()
+    @JoinColumn(name = "userId")
     private User user;
 
     public Long getId() {

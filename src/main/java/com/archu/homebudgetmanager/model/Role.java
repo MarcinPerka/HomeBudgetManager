@@ -1,26 +1,32 @@
 package com.archu.homebudgetmanager.model;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @Column(name = "id")
     private Long id;
 
     @NotNull
+    @Column(name = "code", unique = true)
     private String code;
 
     @NotNull
+    @Column(name = "label")
     private String label;
 
-    public Role() {
-
+    Role() {
     }
 
     public Long getId() {

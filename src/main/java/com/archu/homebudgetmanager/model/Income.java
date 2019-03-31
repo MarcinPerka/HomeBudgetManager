@@ -14,7 +14,7 @@ public class Income extends Transaction {
     @Column(name = "income_category", columnDefinition = "ENUM('STUDY', 'WORK','PARENTS', 'UNCATEGORIZED')")
     private IncomeCategory incomeCategory;
 
-    public Income() {
+    Income() {
     }
 
     public Income(String title, BigDecimal amount, Date dateOfTransaction, IncomeCategory incomeCategory) {
