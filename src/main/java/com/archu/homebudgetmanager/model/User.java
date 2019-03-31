@@ -2,7 +2,6 @@ package com.archu.homebudgetmanager.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -46,6 +45,12 @@ public class User {
 
     public User() {
 
+    }
+
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     public User(Long id) {
