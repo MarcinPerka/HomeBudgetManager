@@ -4,7 +4,6 @@ import com.archu.homebudgetmanager.exception.UserAlreadyExistAuthenticationExcep
 import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id)  or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable Long id) {
         return userService.getUserById(id);
@@ -35,16 +34,16 @@ public class UserController {
     }
 
 
-    @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id)  or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
     @PutMapping("user/{id}")
-    public void updateUser(User user, @PathVariable Long id) throws Exception{
-        userService.updateUser(user,id);
+    public void updateUser(User user, @PathVariable Long id) throws Exception {
+        userService.updateUser(user, id);
     }
 
 
-    @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id)  or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
     @DeleteMapping("user/{id}")
-    public void deleteUser(@PathVariable Long id){
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
     }
 }

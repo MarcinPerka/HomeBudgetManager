@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user/{userId}")
-@PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id)  or hasRole('ROLE_ADMIN')")
+@PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
 public class BalanceController {
     @Autowired
     BalanceService balanceService;
