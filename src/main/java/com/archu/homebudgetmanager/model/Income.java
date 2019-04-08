@@ -9,6 +9,8 @@ import java.util.Date;
 @Table(name = "income")
 public class Income extends Transaction {
 
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "income_category", columnDefinition = "ENUM('STUDY', 'WORK','PARENTS', 'UNCATEGORIZED')")

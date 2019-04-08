@@ -10,6 +10,8 @@ import java.util.Date;
 @Table(name = "expenditure")
 public class Expenditure extends Transaction {
 
+    private static final long serialVersionUID = 2L;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "expenditure_category", columnDefinition = "ENUM('FOOD', 'TRANSPORT', 'PAYMENTS', 'ENTERTAINMENT','HOLIDAYS', 'UNCATEGORIZED')")
