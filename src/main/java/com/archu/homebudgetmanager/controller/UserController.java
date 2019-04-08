@@ -11,16 +11,19 @@ import java.util.List;
 
 @RestController
 public class UserController {
-    @Autowired
-    UserService userService;
 
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
-
 
     @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
     @GetMapping("/user/{id}")
@@ -33,13 +36,11 @@ public class UserController {
         userService.createUser(user);
     }
 
-
     @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
     @PutMapping("user/{id}")
     public void updateUser(User user, @PathVariable Long id) throws Exception {
         userService.updateUser(user, id);
     }
-
 
     @PreAuthorize("(hasRole('ROLE_USER') AND #id == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
     @DeleteMapping("user/{id}")

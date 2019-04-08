@@ -15,8 +15,13 @@ import java.util.Map;
 @RequestMapping("/user/{userId}")
 @PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
 public class ExpenditureController {
+
+    private final ExpenditureService expenditureService;
+
     @Autowired
-    ExpenditureService expenditureService;
+    public ExpenditureController(ExpenditureService expenditureService) {
+        this.expenditureService = expenditureService;
+    }
 
     @GetMapping("/expenditures")
     public List<Expenditure> getAllExpenditures(@PathVariable Long userId) {

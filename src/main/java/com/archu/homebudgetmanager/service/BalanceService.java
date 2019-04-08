@@ -12,10 +12,15 @@ import java.util.List;
 
 @Service
 public class BalanceService {
+
+    private final ExpenditureRepository expenditureRepository;
+    private final IncomeRepository incomeRepository;
+
     @Autowired
-    ExpenditureRepository expenditureRepository;
-    @Autowired
-    IncomeRepository incomeRepository;
+    public BalanceService(ExpenditureRepository expenditureRepository, IncomeRepository incomeRepository) {
+        this.expenditureRepository = expenditureRepository;
+        this.incomeRepository = incomeRepository;
+    }
 
     public List<Transaction> getAllTransactions(Long userId) {
         List<Transaction> transactions = new ArrayList<>();

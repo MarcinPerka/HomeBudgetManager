@@ -13,8 +13,13 @@ import java.util.Map;
 
 @Service
 public class IncomeService {
+
+    private final IncomeRepository incomeRepository;
+
     @Autowired
-    IncomeRepository incomeRepository;
+    public IncomeService(IncomeRepository incomeRepository) {
+        this.incomeRepository = incomeRepository;
+    }
 
     public List<Income> getAllIncomes(Long userId) {
         List<Income> incomes = new ArrayList<>();

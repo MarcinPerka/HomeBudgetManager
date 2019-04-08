@@ -13,8 +13,13 @@ import java.util.Map;
 
 @Service
 public class ExpenditureService {
+
+    private  final ExpenditureRepository expenditureRepository;
+
     @Autowired
-    ExpenditureRepository expenditureRepository;
+    public ExpenditureService(ExpenditureRepository expenditureRepository) {
+        this.expenditureRepository = expenditureRepository;
+    }
 
     public List<Expenditure> getAllExpenditures(Long userId) {
         List<Expenditure> expenditures = new ArrayList<>();

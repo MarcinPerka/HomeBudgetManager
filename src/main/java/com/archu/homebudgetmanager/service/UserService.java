@@ -16,17 +16,16 @@ import java.util.Set;
 
 @Service
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getUserById(Long id) {

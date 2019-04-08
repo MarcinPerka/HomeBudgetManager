@@ -15,8 +15,13 @@ import java.util.Map;
 @RequestMapping("/user/{userId}")
 @PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
 public class IncomeController {
+
+    private final IncomeService incomeService;
+
     @Autowired
-    IncomeService incomeService;
+    public IncomeController(IncomeService incomeService) {
+        this.incomeService = incomeService;
+    }
 
     @GetMapping("/incomes")
     public List<Income> getAllIncomes(@PathVariable Long userId) {

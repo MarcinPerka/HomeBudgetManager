@@ -16,8 +16,13 @@ import java.util.List;
 @RequestMapping("/user/{userId}")
 @PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
 public class BalanceController {
+
+    private final BalanceService balanceService;
+
     @Autowired
-    BalanceService balanceService;
+    public BalanceController(BalanceService balanceService) {
+        this.balanceService = balanceService;
+    }
 
     @GetMapping("/balance")
     public List<Transaction> getAllTransactions(@PathVariable Long userId) {
