@@ -9,7 +9,7 @@ import java.util.Date;
 @Table(name = "income")
 public class Income extends Transaction {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3L;
 
     @NotNull
     @Enumerated(EnumType.STRING)
