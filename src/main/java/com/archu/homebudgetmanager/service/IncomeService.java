@@ -22,7 +22,7 @@ public class IncomeService {
         this.incomeRepository = incomeRepository;
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public List<Income> getAllIncomes(Long userId) {
         List<Income> incomes = new ArrayList<>();
         incomeRepository.findByUserId(userId)
@@ -30,17 +30,17 @@ public class IncomeService {
         return incomes;
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public Income getIncomeById(Long userId, Long id) {
         return incomeRepository.findByUserIdAndId(userId, id);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public List<Income> getIncomesByMonth(Long userId, Integer month) {
         return incomeRepository.findIncomeByUserIdAndMonth(userId, month);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public Map<String, BigDecimal> getSumOfIncomesByCategory(Long userId) {
         Map<String, BigDecimal> sumIncomeByCategory = new HashMap<>();
         List<Income> incomes = incomeRepository.findByUserId(userId);
@@ -55,17 +55,17 @@ public class IncomeService {
         return sumIncomeByCategory;
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public BigDecimal getSumOfIncomes(Long userId) {
         return incomeRepository.findSumOfIncomesByUserId(userId);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public BigDecimal getSumOfIncomesByMonth(Long userId, Integer month) {
         return incomeRepository.findSumOfIncomesByMonth(userId, month);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public Map<String, BigDecimal> getSumOfIncomesByMonthAndCategory(Long userId, Integer month) {
         Map<String, BigDecimal> sumIncomeByMonthAndCategory = new HashMap<>();
         List<Income> incomes = getIncomesByMonth(userId, month);
@@ -79,17 +79,17 @@ public class IncomeService {
         return sumIncomeByMonthAndCategory;
     }
 
-    @PreAuthorize("#income.user.id == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#income.user.id == authentication.principal.id OR hasRole('ADMIN')")
     public void addIncome(Income income) {
         incomeRepository.save(income);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public void deleteIncomeById(Long userId, Long id) {
         incomeRepository.deleteById(id);
     }
 
-    @PreAuthorize("#income.user.id == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#income.user.id == authentication.principal.id OR hasRole('ADMIN')")
     public void updateIncome(Income income, Long id) {
         Income incomeToUpdate = incomeRepository.findById(id).orElse(null);
 

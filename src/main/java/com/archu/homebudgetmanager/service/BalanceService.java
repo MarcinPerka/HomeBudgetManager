@@ -23,8 +23,7 @@ public class BalanceService {
         this.incomeRepository = incomeRepository;
     }
 
-
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public List<Transaction> getAllTransactions(Long userId) {
         List<Transaction> transactions = new ArrayList<>();
         incomeRepository.findByUserId(userId)
@@ -34,13 +33,13 @@ public class BalanceService {
         return transactions;
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public BigDecimal getBalanceByMonth(Long userId, Integer month) {
         return incomeRepository.findSumOfIncomesByMonth(userId, month)
                 .add(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(userId, month));
     }
 
-    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public BigDecimal getTotalBalance(Long userId) {
         return incomeRepository.findSumOfIncomesByUserId(userId).subtract(expenditureRepository.findSumOfExpendituresByUserId(userId));
     }
