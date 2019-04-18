@@ -4,7 +4,6 @@ import com.archu.homebudgetmanager.model.Expenditure;
 import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.service.ExpenditureService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -13,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user/{userId}")
-@PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
 public class ExpenditureController {
 
     private final ExpenditureService expenditureService;
@@ -59,8 +57,8 @@ public class ExpenditureController {
     }
 
     @DeleteMapping("/expenditures/{id}")
-    public void deleteExpenditureById(@PathVariable Long id) {
-        expenditureService.deleteExpenditureById(id);
+    public void deleteExpenditureById(@PathVariable Long userId, @PathVariable Long id) {
+        expenditureService.deleteExpenditureById(userId, id);
     }
 
     @PostMapping("/expenditures/")

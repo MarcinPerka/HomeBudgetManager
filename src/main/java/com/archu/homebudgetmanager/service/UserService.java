@@ -7,6 +7,7 @@ import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.repository.RoleRepository;
 import com.archu.homebudgetmanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +29,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @PreAuthorize("#id == authentication.principal.id OR hasRole('ADMIN')")
     public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -47,10 +50,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @PreAuthorize("#id == authentication.principal.id OR hasRole('ADMIN')")
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
     }
 
+    @PreAuthorize("#id == authentication.principal.id OR hasRole('ADMIN')")
     public void updateUser(User user, Long id) throws Exception {
         User userToUpdate = userRepository.findById(id).orElse(null);
 

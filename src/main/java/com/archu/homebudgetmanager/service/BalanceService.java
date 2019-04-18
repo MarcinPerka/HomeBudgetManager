@@ -4,6 +4,7 @@ import com.archu.homebudgetmanager.model.Transaction;
 import com.archu.homebudgetmanager.repository.ExpenditureRepository;
 import com.archu.homebudgetmanager.repository.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,6 +23,8 @@ public class BalanceService {
         this.incomeRepository = incomeRepository;
     }
 
+
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
     public List<Transaction> getAllTransactions(Long userId) {
         List<Transaction> transactions = new ArrayList<>();
         incomeRepository.findByUserId(userId)
@@ -31,11 +34,13 @@ public class BalanceService {
         return transactions;
     }
 
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
     public BigDecimal getBalanceByMonth(Long userId, Integer month) {
         return incomeRepository.findSumOfIncomesByMonth(userId, month)
-                .subtract(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(userId, month));
+                .add(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(userId, month));
     }
 
+    @PreAuthorize("#userId == authentication.principal.id OR hasRole('ROLE_ADMIN')")
     public BigDecimal getTotalBalance(Long userId) {
         return incomeRepository.findSumOfIncomesByUserId(userId).subtract(expenditureRepository.findSumOfExpendituresByUserId(userId));
     }

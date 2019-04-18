@@ -3,7 +3,6 @@ package com.archu.homebudgetmanager.controller;
 import com.archu.homebudgetmanager.model.Transaction;
 import com.archu.homebudgetmanager.service.BalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user/{userId}")
-@PreAuthorize("(hasRole('ROLE_USER') AND #userId == authentication.principal.id) OR hasRole('ROLE_ADMIN')")
 public class BalanceController {
 
     private final BalanceService balanceService;
