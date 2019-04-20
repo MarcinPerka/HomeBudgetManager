@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class ExpenditureService {
 
-    private  final ExpenditureRepository expenditureRepository;
+    private final ExpenditureRepository expenditureRepository;
 
     @Autowired
     public ExpenditureService(ExpenditureRepository expenditureRepository) {
@@ -25,8 +25,7 @@ public class ExpenditureService {
     @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public List<Expenditure> getAllExpenditures(Long userId) {
         List<Expenditure> expenditures = new ArrayList<>();
-        expenditureRepository.findByUserId(userId)
-                .forEach(expenditures::add);
+        expenditures.addAll(expenditureRepository.findByUserId(userId));
         return expenditures;
     }
 
@@ -94,9 +93,12 @@ public class ExpenditureService {
     public void updateExpenditure(Expenditure expenditure, Long id) {
         Expenditure expenditureToUpdate = expenditureRepository.findById(id).orElse(null);
 
-        if (expenditureToUpdate == null)
-
-            expenditure.setId(id);
-        expenditureRepository.save(expenditure);
+        if (expenditureToUpdate != null) {
+            expenditureToUpdate.setTitle(expenditure.getTitle());
+            expenditureToUpdate.setAmount(expenditure.getAmount());
+            expenditureToUpdate.setDateOfTransaction(expenditure.getDateOfTransaction());
+            expenditureToUpdate.setExpenditureCategory(expenditure.getExpenditureCategory());
+            expenditureRepository.save(expenditure);
+        }
     }
 }
