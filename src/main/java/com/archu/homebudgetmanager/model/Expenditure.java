@@ -19,7 +19,7 @@ public class Expenditure extends Transaction {
 
     public enum ExpenditureCategory {FOOD, TRANSPORT, PAYMENTS, ENTERTAINMENT, HOLIDAYS, UNCATEGORIZED;}
 
-    Expenditure() {
+    public Expenditure() {
     }
 
     public Expenditure(String title, BigDecimal amount, Date dateOfTransaction, ExpenditureCategory expenditureCategory) {
