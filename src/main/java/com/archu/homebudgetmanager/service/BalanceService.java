@@ -39,6 +39,6 @@ public class BalanceService {
 
     @PreAuthorize("#userId == authentication.principal.id OR hasRole('ADMIN')")
     public BigDecimal getTotalBalance(Long userId) {
-        return incomeRepository.findSumOfIncomesByUserId(userId).subtract(expenditureRepository.findSumOfExpendituresByUserId(userId));
+        return incomeRepository.findSumOfIncomesByUserId(userId).add(expenditureRepository.findSumOfExpendituresByUserId(userId));
     }
 }
