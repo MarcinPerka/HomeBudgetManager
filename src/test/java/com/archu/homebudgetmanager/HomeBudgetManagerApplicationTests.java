@@ -12,5 +12,9 @@ public class HomeBudgetManagerApplicationTests {
     @Test
     public void contextLoads() {
     }
+    @Test
+    public void main() {
+        HomeBudgetManagerApplication.main(new String[] {});
+    }
 
 }

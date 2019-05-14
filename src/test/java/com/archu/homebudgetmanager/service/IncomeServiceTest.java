@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager;
+package com.archu.homebudgetmanager.service;
 
 import com.archu.homebudgetmanager.model.Income;
 import com.archu.homebudgetmanager.model.User;
@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.lang.Nullable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -95,7 +98,6 @@ public class IncomeServiceTest {
 
     @Test
     public void testGetSumOfIncomes() {
-        List<Income> incomes = new ArrayList<>(Arrays.asList(income1, income2));
         BigDecimal sum = income1.getAmount().add(income2.getAmount());
 
         when(incomeRepository.findSumOfIncomesByUserId(user.getId())).thenReturn(sum);
@@ -105,11 +107,31 @@ public class IncomeServiceTest {
 
     @Test
     public void testGetSumOfIncomesByMonth() {
-        List<Income> incomes = new ArrayList<>(Arrays.asList(income1, income2));
         BigDecimal sum = income1.getAmount();
 
         when(incomeRepository.findSumOfIncomesByMonth(user.getId(), 10)).thenReturn(sum);
         BigDecimal found = incomeService.getSumOfIncomesByMonth(1L, 10);
         assertThat(found).isEqualTo(sum);
+    }
+
+    @Test
+    public void testAddIncome() {
+        when(incomeRepository.save(any(Income.class))).thenReturn(income1);
+        incomeService.addIncome(income1);
+    }
+
+    @Test
+    public void testDeleteIncomeById() {
+        doNothing().when(incomeRepository).delete(any(Income.class));
+        incomeService.deleteIncomeById(user.getId(),income1.getId());
+    }
+
+    @Test
+    public void testUpdateIncome() {
+        Income updatedIncome = new Income("Found on the ground", new BigDecimal(100.03),new Date(2019,3,3), Income.IncomeCategory.UNCATEGORIZED);
+        ReflectionTestUtils.setField(updatedIncome, "id", 1L);
+        when(incomeRepository.findById(income1.getId())).thenReturn(Optional.ofNullable(income1));
+        when(incomeRepository.save(income1)).thenReturn(updatedIncome);
+        incomeService.updateIncome(updatedIncome,user.getId());
     }
 }

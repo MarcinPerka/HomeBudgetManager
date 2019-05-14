@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager;
+package com.archu.homebudgetmanager.service;
 
 import com.archu.homebudgetmanager.model.Expenditure;
 import com.archu.homebudgetmanager.model.User;
@@ -17,7 +17,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -118,4 +119,24 @@ public class ExpenditureServiceTest {
         assertThat(found).isEqualTo(sum);
     }
 
+    @Test
+    public void testAddExpenditure() {
+        when(expenditureRepository.save(any(Expenditure.class))).thenReturn(expenditure1);
+        expenditureService.addExpenditure(expenditure1);
+    }
+
+    @Test
+    public void testDeleteExpenditureById() {
+        doNothing().when(expenditureRepository).delete(any(Expenditure.class));
+        expenditureService.deleteExpenditureById(user.getId(),expenditure1.getId());
+    }
+
+    @Test
+    public void testUpdateExpenditure() {
+        Expenditure updatedExpenditure = new Expenditure("Venezia", new BigDecimal(-100.03),new Date(2019,3,3), Expenditure.ExpenditureCategory.HOLIDAYS);
+        ReflectionTestUtils.setField(updatedExpenditure, "id", 1L);
+        when(expenditureRepository.findById(expenditure1.getId())).thenReturn(Optional.ofNullable(expenditure1));
+        when(expenditureRepository.save(expenditure1)).thenReturn(updatedExpenditure);
+        expenditureService.updateExpenditure(updatedExpenditure,user.getId());
+    }
 }

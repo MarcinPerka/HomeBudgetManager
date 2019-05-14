@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager;
+package com.archu.homebudgetmanager.service;
 
 import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.repository.UserRepository;
@@ -12,8 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +31,12 @@ public class UserDetailsServiceImplTest {
         User user = new User("username", "password", "email@gmail.com");
         when(this.userRepository.findByUsername(any(String.class))).thenReturn(user);
         UserDetails userDetails = this.userDetailsService.loadUserByUsername("username");
+        assertEquals(userDetails.getUsername(),user.getUsername());
+        assertEquals(userDetails.getPassword(), user.getPassword());
         assertTrue(userDetails.isAccountNonLocked());
+        assertTrue(userDetails.isAccountNonExpired());
+        assertTrue(userDetails.isEnabled());
+        assertTrue(userDetails.isCredentialsNonExpired());
     }
 
     @Test(expected = UsernameNotFoundException.class)
