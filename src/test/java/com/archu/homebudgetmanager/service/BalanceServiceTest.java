@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -98,6 +101,8 @@ public class BalanceServiceTest {
         when(expenditureRepository.findByUserId(user.getId())).thenReturn(expenditures);
         List<Transaction> found = balanceService.getAllTransactions(user.getId());
         assertThat(found).isEqualTo(transactions);
+        verify(incomeRepository).findByUserId(anyLong());
+        verify(expenditureRepository).findByUserId(anyLong());
 
     }
 
@@ -111,6 +116,8 @@ public class BalanceServiceTest {
         when(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(user.getId(), 10)).thenReturn(expendituresSum);
         BigDecimal found = balanceService.getBalanceByMonth(user.getId(), 10);
         assertThat(found).isEqualTo(balance);
+        verify(incomeRepository).findSumOfIncomesByMonth(anyLong(),anyInt());
+        verify(expenditureRepository).findSumOfExpendituresByUserIdAndMonth(anyLong(),anyInt());
     }
 
     @Test
@@ -123,5 +130,7 @@ public class BalanceServiceTest {
         when(expenditureRepository.findSumOfExpendituresByUserId(user.getId())).thenReturn(expendituresSum);
         BigDecimal found = balanceService.getTotalBalance(user.getId());
         assertThat(found).isEqualTo(balance);
+        verify(incomeRepository).findSumOfIncomesByUserId(anyLong());
+        verify(expenditureRepository).findSumOfExpendituresByUserId(anyLong());
     }
 }

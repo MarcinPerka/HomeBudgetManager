@@ -31,7 +31,7 @@ public class ExpenditureServiceTest {
     private ExpenditureRepository expenditureRepository;
 
     private User user;
-    private Expenditure expenditure1, expenditure2, expenditure3;
+    private Expenditure expenditure1, expenditure2, expenditure3, expenditure4;
 
     @Before
     public void setUp() {
@@ -57,6 +57,10 @@ public class ExpenditureServiceTest {
         expenditure3.setExpenditureCategory(Expenditure.ExpenditureCategory.UNCATEGORIZED);
         expenditure3.setUser(user);
         ReflectionTestUtils.setField(expenditure3, "id", 3L);
+
+        expenditure4 = new Expenditure("Stuff", new BigDecimal(-10.12), new Date(2019, 10, 10), Expenditure.ExpenditureCategory.UNCATEGORIZED);
+        expenditure4.setUser(user);
+        ReflectionTestUtils.setField(expenditure4, "id", 4L);
     }
 
     @Test
@@ -64,6 +68,7 @@ public class ExpenditureServiceTest {
         when(expenditureRepository.findByUserIdAndId(user.getId(), expenditure1.getId())).thenReturn(expenditure1);
         Expenditure found = expenditureService.getExpenditureById(1L, 1L);
         assertThat(found).isEqualTo(expenditure1);
+        verify(expenditureRepository).findByUserIdAndId(anyLong(), anyLong());
     }
 
     @Test
@@ -73,6 +78,7 @@ public class ExpenditureServiceTest {
         when(expenditureRepository.findByUserId(user.getId())).thenReturn(expenditures);
         List<Expenditure> found = expenditureService.getAllExpenditures(1L);
         assertThat(found).isEqualTo(expenditures);
+        verify(expenditureRepository).findByUserId(anyLong());
     }
 
     @Test
@@ -85,17 +91,20 @@ public class ExpenditureServiceTest {
         when(expenditureRepository.findByUserId(user.getId())).thenReturn(expenditures);
         Map<String, BigDecimal> found = expenditureService.getSumOfExpendituresByCategory(1L);
         assertThat(found).isEqualTo(expendituresByCategory);
+        verify(expenditureRepository).findByUserId(anyLong());
     }
 
     @Test
     public void testGetSumOfExpendituresByMonthAndCategory() {
-        List<Expenditure> expenditures = new ArrayList<>(Arrays.asList(expenditure1, expenditure3));
+        List<Expenditure> expenditures = new ArrayList<>(Arrays.asList(expenditure1, expenditure3, expenditure4));
         Map<String, BigDecimal> expendituresByCategory = new HashMap<>();
         expendituresByCategory.put("FOOD", expenditure1.getAmount());
         expendituresByCategory.put("UNCATEGORIZED", expenditure3.getAmount());
+        expendituresByCategory.put("UNCATEGORIZED", expendituresByCategory.get(expenditure4.getAmount()));
         when(expenditureRepository.findByUserIdAndMonth(user.getId(), 10)).thenReturn(expenditures);
         Map<String, BigDecimal> found = expenditureService.getSumOfExpendituresByMonthAndCategory(1L, 10);
         assertThat(found).isEqualTo(expendituresByCategory);
+        verify(expenditureRepository).findByUserIdAndMonth(anyLong(), anyInt());
     }
 
     @Test
@@ -105,6 +114,7 @@ public class ExpenditureServiceTest {
         when(expenditureRepository.findSumOfExpendituresByUserId(user.getId())).thenReturn(sum);
         BigDecimal found = expenditureService.getSumOfExpenditures(1L);
         assertThat(found).isEqualTo(sum);
+        verify(expenditureRepository).findSumOfExpendituresByUserId(anyLong());
     }
 
     @Test
@@ -117,26 +127,29 @@ public class ExpenditureServiceTest {
         when(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(user.getId(), 10)).thenReturn(sum);
         BigDecimal found = expenditureService.getSumOfExpendituresByMonth(1L, 10);
         assertThat(found).isEqualTo(sum);
+        verify(expenditureRepository).findSumOfExpendituresByUserIdAndMonth(anyLong(), anyInt());
     }
 
     @Test
     public void testAddExpenditure() {
-        when(expenditureRepository.save(any(Expenditure.class))).thenReturn(expenditure1);
         expenditureService.addExpenditure(expenditure1);
+        verify(expenditureRepository).save(any(Expenditure.class));
     }
 
     @Test
     public void testDeleteExpenditureById() {
-        doNothing().when(expenditureRepository).delete(any(Expenditure.class));
-        expenditureService.deleteExpenditureById(user.getId(),expenditure1.getId());
+        expenditureService.deleteExpenditureById(user.getId(), expenditure1.getId());
+        verify(expenditureRepository).deleteById(anyLong());
     }
 
     @Test
     public void testUpdateExpenditure() {
-        Expenditure updatedExpenditure = new Expenditure("Venezia", new BigDecimal(-100.03),new Date(2019,3,3), Expenditure.ExpenditureCategory.HOLIDAYS);
+        Expenditure updatedExpenditure = new Expenditure("Venezia", new BigDecimal(-100), new Date(2019, 3, 3), Expenditure.ExpenditureCategory.HOLIDAYS);
         ReflectionTestUtils.setField(updatedExpenditure, "id", 1L);
-        when(expenditureRepository.findById(expenditure1.getId())).thenReturn(Optional.ofNullable(expenditure1));
-        when(expenditureRepository.save(expenditure1)).thenReturn(updatedExpenditure);
-        expenditureService.updateExpenditure(updatedExpenditure,user.getId());
+
+        when(expenditureRepository.findById(expenditure1.getId())).thenReturn(Optional.of(expenditure1));
+        expenditureService.updateExpenditure(updatedExpenditure, user.getId());
+        verify(expenditureRepository).findById(anyLong());
+        verify(expenditureRepository).save(any(Expenditure.class));
     }
 }

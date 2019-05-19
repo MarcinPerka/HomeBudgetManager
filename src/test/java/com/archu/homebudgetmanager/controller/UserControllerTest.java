@@ -59,6 +59,7 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsString(users))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(userService).getAllUsers();
     }
 
     @Test
@@ -87,6 +88,7 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsString(any(User.class)))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(userService).createUser(any(User.class));
     }
 
     @Test(expected = UserAlreadyExistAuthenticationException.class)
@@ -96,24 +98,27 @@ public class UserControllerTest {
         mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(userService).createUser(any(User.class));
     }
 
     @Test
     public void testUpdateUser() throws Exception {
-        doNothing().when(userService).updateUser(any(User.class),anyLong());
+        doNothing().when(userService).updateUser(any(User.class), anyLong());
 
-        mockMvc.perform(put("/user/{userId}",eq(anyLong()))
+        mockMvc.perform(put("/user/{userId}", eq(anyLong()))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(userService).updateUser(any(User.class), anyLong());
     }
 
     @Test
     public void testDeleteUser() throws Exception {
         doNothing().when(userService).deleteUserById(anyLong());
 
-        mockMvc.perform(delete("/user/{userId}",anyLong())
+        mockMvc.perform(delete("/user/{userId}", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(userService).deleteUserById(anyLong());
     }
 
 }

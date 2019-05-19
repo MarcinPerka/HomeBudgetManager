@@ -22,10 +22,8 @@ import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,7 +40,7 @@ public class IncomeControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
     private User user;
-    private Income income1, income2, income3;
+    private Income income1, income2, income3, income4;
 
     @Before
     public void setUp() {
@@ -51,7 +49,6 @@ public class IncomeControllerTest {
 
         user = new User("test", "test", "test@gmail.com");
         ReflectionTestUtils.setField(user, "id", 1L);
-
 
         income1 = new Income("Parents", new BigDecimal(900.39), new Date(2019, 10, 1), Income.IncomeCategory.PARENTS);
         income1.setUser(user);
@@ -68,6 +65,10 @@ public class IncomeControllerTest {
         income3 = new Income("Some stuff", new BigDecimal(700), new Date(2019, 10, 1), Income.IncomeCategory.WORK);
         income3.setUser(user);
         ReflectionTestUtils.setField(income3, "id", 3L);
+
+        income4 = new Income("Some stuff", new BigDecimal(1700), new Date(2019, 10, 11), Income.IncomeCategory.WORK);
+        income4.setUser(user);
+        ReflectionTestUtils.setField(income4, "id", 4L);
     }
 
     @Test
@@ -78,6 +79,7 @@ public class IncomeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(income1.getTitle()));
+        verify(incomeService).getIncomeById(anyLong(), anyLong());
     }
 
     @Test
@@ -89,6 +91,7 @@ public class IncomeControllerTest {
                 .content(objectMapper.writeValueAsString(incomes))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).getAllIncomes(anyLong());
     }
 
     @Test
@@ -100,6 +103,7 @@ public class IncomeControllerTest {
                 .content(objectMapper.writeValueAsString(sum))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).getSumOfIncomes(anyLong());
     }
 
     @Test
@@ -111,6 +115,7 @@ public class IncomeControllerTest {
                 .content(objectMapper.writeValueAsString(incomes))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).getIncomesByMonth(anyLong(), anyInt());
     }
 
     @Test
@@ -120,26 +125,28 @@ public class IncomeControllerTest {
         incomesByCategory.put("PARENTS", income1.getAmount());
         incomesByCategory.put("WORK", income2.getAmount().add(income3.getAmount()));
 
-        when(incomeService.getAllIncomes(user.getId())).thenReturn(incomes);
         when(incomeService.getSumOfIncomesByCategory(user.getId())).thenReturn(incomesByCategory);
         mockMvc.perform(get("/user/{userId}/incomes/byCategory", 1)
                 .content(objectMapper.writeValueAsString(incomes))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).getSumOfIncomesByCategory(anyLong());
     }
 
     @Test
     public void testGetSumOfIncomesByMonthAndCategory() throws Exception {
-        List<Income> incomes = new ArrayList<>(Arrays.asList(income1, income2, income3));
+        List<Income> incomes = new ArrayList<>(Arrays.asList(income1, income2, income3, income4));
         Map<String, BigDecimal> incomesByCategory = new HashMap<>();
         incomesByCategory.put("PARENTS", income1.getAmount());
         incomesByCategory.put("WORK", income2.getAmount().add(income3.getAmount()));
+        incomesByCategory.put("WORK", incomesByCategory.get(income4.getAmount()));
 
         when(incomeService.getSumOfIncomesByMonthAndCategory(user.getId(), 10)).thenReturn(incomesByCategory);
-        mockMvc.perform(get("user/{userId}/incomes/byCategory/month/{month}", 1, 10)
+        mockMvc.perform(get("/user/{userId}/incomes/byCategory/month/{month}", 1, 10)
                 .content(objectMapper.writeValueAsString(incomesByCategory))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).getSumOfIncomesByMonthAndCategory(anyLong(), anyInt());
     }
 
     @Test
@@ -151,6 +158,7 @@ public class IncomeControllerTest {
                 .content(objectMapper.writeValueAsString(sum))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).getSumOfIncomesByMonth(anyLong(), anyInt());
     }
 
     @Test
@@ -160,24 +168,27 @@ public class IncomeControllerTest {
         mockMvc.perform(post("/user/{userId}/incomes/", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).addIncome(any(Income.class));
     }
 
     @Test
     public void testUpdateIncome() throws Exception {
-        doNothing().when(incomeService).updateIncome(any(Income.class),anyLong());
+        doNothing().when(incomeService).updateIncome(any(Income.class), anyLong());
 
-        mockMvc.perform(put("/user/{userId}/incomes/{id}", anyLong(),anyLong())
+        mockMvc.perform(put("/user/{userId}/incomes/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).updateIncome(any(Income.class), anyLong());
     }
 
     @Test
     public void testDeleteIncome() throws Exception {
-        doNothing().when(incomeService).deleteIncomeById(anyLong(),anyLong());
+        doNothing().when(incomeService).deleteIncomeById(anyLong(), anyLong());
 
-        mockMvc.perform(delete("/user/{userId}/incomes/{id}", anyLong(),anyLong())
+        mockMvc.perform(delete("/user/{userId}/incomes/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(incomeService).deleteIncomeById(anyLong(), anyLong());
     }
 }
 

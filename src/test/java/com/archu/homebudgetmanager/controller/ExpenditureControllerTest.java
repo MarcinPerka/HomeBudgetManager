@@ -39,7 +39,7 @@ public class ExpenditureControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
     private User user;
-    private Expenditure expenditure1, expenditure2, expenditure3;
+    private Expenditure expenditure1, expenditure2, expenditure3, expenditure4;
 
     @Before
     public void setUp() {
@@ -68,6 +68,11 @@ public class ExpenditureControllerTest {
         expenditure3.setExpenditureCategory(Expenditure.ExpenditureCategory.UNCATEGORIZED);
         expenditure3.setUser(user);
         ReflectionTestUtils.setField(expenditure3, "id", 3L);
+
+        expenditure4 = new Expenditure("Stuff", new BigDecimal(-10.12), new Date(2019, 10, 10), Expenditure.ExpenditureCategory.UNCATEGORIZED);
+        expenditure4.setUser(user);
+        ReflectionTestUtils.setField(expenditure4, "id", 4L);
+
     }
 
     @Test
@@ -78,6 +83,7 @@ public class ExpenditureControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(expenditure1.getTitle()));
+        verify(expenditureService).getExpenditureById(anyLong(), anyLong());
     }
 
     @Test
@@ -89,6 +95,7 @@ public class ExpenditureControllerTest {
                 .content(objectMapper.writeValueAsString(expenditures))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).getAllExpenditures(anyLong());
     }
 
     @Test
@@ -100,6 +107,7 @@ public class ExpenditureControllerTest {
                 .content(objectMapper.writeValueAsString(expenditures))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).getExpendituresByMonth(anyLong(), anyInt());
     }
 
     @Test
@@ -111,6 +119,7 @@ public class ExpenditureControllerTest {
                 .content(objectMapper.writeValueAsString(sum))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).getSumOfExpenditures(anyLong());
     }
 
     @Test
@@ -125,21 +134,23 @@ public class ExpenditureControllerTest {
                 .content(objectMapper.writeValueAsString(expenditures))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).getSumOfExpendituresByCategory(anyLong());
     }
 
     @Test
     public void testGetSumOfExpendituresByMonthAndCategory() throws Exception {
-        List<Expenditure> expenditures = new ArrayList<>(Arrays.asList(expenditure1, expenditure2, expenditure3));
+        List<Expenditure> expenditures = new ArrayList<>(Arrays.asList(expenditure1, expenditure3, expenditure4));
         Map<String, BigDecimal> expendituresByCategory = new HashMap<>();
         expendituresByCategory.put("FOOD", expenditure1.getAmount());
-        expendituresByCategory.put("UNCATEGORIZED", expenditure2.getAmount().add(expenditure3.getAmount()));
+        expendituresByCategory.put("UNCATEGORIZED", expenditure3.getAmount());
+        expendituresByCategory.put("UNCATEGORIZED", expendituresByCategory.get(expenditure4.getAmount()));
 
-        when(expenditureService.getExpendituresByMonth(user.getId(), 10)).thenReturn(expenditures);
         when(expenditureService.getSumOfExpendituresByMonthAndCategory(user.getId(), 10)).thenReturn(expendituresByCategory);
-        mockMvc.perform(get("user/{userId}/expenditures/byCategory/month/{month}", 1, 10)
+        mockMvc.perform(get("/user/{userId}/expenditures/byCategory/month/{month}", 1, 10)
                 .content(objectMapper.writeValueAsString(expendituresByCategory))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).getSumOfExpendituresByMonthAndCategory(anyLong(), anyInt());
     }
 
     @Test
@@ -151,6 +162,7 @@ public class ExpenditureControllerTest {
                 .content(objectMapper.writeValueAsString(sum))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).getSumOfExpendituresByMonth(anyLong(), anyInt());
     }
 
     @Test
@@ -160,24 +172,27 @@ public class ExpenditureControllerTest {
         mockMvc.perform(post("/user/{userId}/expenditures/", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).addExpenditure(any(Expenditure.class));
     }
 
     @Test
     public void testUpdateExpenditure() throws Exception {
-        doNothing().when(expenditureService).updateExpenditure(any(Expenditure.class),anyLong());
+        doNothing().when(expenditureService).updateExpenditure(any(Expenditure.class), anyLong());
 
-        mockMvc.perform(put("/user/{userId}/expenditures/{id}", anyLong(),anyLong())
+        mockMvc.perform(put("/user/{userId}/expenditures/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).updateExpenditure(any(Expenditure.class), anyLong());
     }
 
     @Test
     public void testDeleteExpenditure() throws Exception {
-        doNothing().when(expenditureService).deleteExpenditureById(anyLong(),anyLong());
+        doNothing().when(expenditureService).deleteExpenditureById(anyLong(), anyLong());
 
-        mockMvc.perform(delete("/user/{userId}/expenditures/{id}", anyLong(),anyLong())
+        mockMvc.perform(delete("/user/{userId}/expenditures/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(expenditureService).deleteExpenditureById(anyLong(),anyLong());
     }
 }
 

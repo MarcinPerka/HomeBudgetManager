@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -103,6 +103,7 @@ public class BalanceControllerTest {
                 .content(objectMapper.writeValueAsString(transactions))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(balanceService).getAllTransactions(anyLong());
     }
 
     @Test
@@ -116,6 +117,7 @@ public class BalanceControllerTest {
                 .content(objectMapper.writeValueAsString(balance))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(balanceService).getBalanceByMonth(anyLong(),anyInt());
     }
 
     @Test
@@ -129,5 +131,6 @@ public class BalanceControllerTest {
                 .content(objectMapper.writeValueAsString(balance))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(balanceService).getTotalBalance(anyLong());
     }
 }

@@ -20,11 +20,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -70,6 +68,7 @@ public class UserServiceTest {
         when(userRepository.findById(user1.getId())).thenReturn(Optional.ofNullable(user1));
         User found = userService.getUserById(user1.getId());
         assertThat(found).isEqualTo(user1);
+        verify(userRepository).findById(anyLong());
     }
 
     @Test(expected = NullPointerException.class)
@@ -77,6 +76,7 @@ public class UserServiceTest {
         when(userRepository.findById(user1.getId())).thenReturn(null);
         User found = userService.getUserById(user1.getId());
         assertNull(found);
+        verify(userRepository).findById(anyLong());
     }
 
     @Test
@@ -86,29 +86,40 @@ public class UserServiceTest {
         when(userRepository.findAll()).thenReturn(users);
         List<User> found = userService.getAllUsers();
         assertThat(found).isEqualTo(users);
+        verify(userRepository).findAll();
     }
 
     @Test
     public void testCreateUser() throws UserAlreadyExistAuthenticationException {
-        when(userRepository.save(any(User.class))).thenReturn(user1);
         userService.createUser(user1);
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
     public void testDeleteUserById() {
-        doNothing().when(userRepository).delete(any(User.class));
-        userService.deleteUserById(user1.getId());
+        userService.deleteUserById(anyLong());
+        verify(userRepository).deleteById(anyLong());
     }
 
     @Test
     public void testUpdateUser() throws Exception {
         User updatedUser = new User("admin", "admin", "admin@tmqi.com");
         ReflectionTestUtils.setField(updatedUser, "id", 1L);
-        when(userRepository.findById(user1.getId())).thenReturn(Optional.ofNullable(user1));
-        when(userRepository.save(user1)).thenReturn(updatedUser);
-        userService.updateUser(updatedUser, user1.getId());
 
-        assertEquals(updatedUser.getId(),user1.getId());
+        when(userRepository.findById(user1.getId())).thenReturn(Optional.ofNullable(user1));
+        userService.updateUser(updatedUser, user1.getId());
+        verify(userRepository).findById(anyLong());
+        verify(userRepository).save(any(User.class));
     }
 
+    @Test(expected = Exception.class)
+    public void testUpdateUser_when_UserNotExists() throws Exception {
+        User updatedUser = new User("admin", "admin", "admin@tmqi.com");
+        ReflectionTestUtils.setField(updatedUser, "id", 1L);
+
+        when(userRepository.findById(user1.getId())).thenReturn(null);
+        userService.updateUser(updatedUser, user1.getId());
+        verify(userRepository).findById(anyLong());
+        verify(userRepository, times(0)).save(any(User.class));
+    }
 }

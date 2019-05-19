@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -29,20 +30,24 @@ public class UserDetailsServiceImplTest {
     @Test
     public void testLoadUserByUsername_activeUser() {
         User user = new User("username", "password", "email@gmail.com");
-        when(this.userRepository.findByUsername(any(String.class))).thenReturn(user);
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername("username");
-        assertEquals(userDetails.getUsername(),user.getUsername());
+
+        when(userRepository.findByUsername(any(String.class))).thenReturn(user);
+        UserDetails userDetails = userDetailsService.loadUserByUsername("username");
+        assertEquals(userDetails.getUsername(), user.getUsername());
         assertEquals(userDetails.getPassword(), user.getPassword());
         assertTrue(userDetails.isAccountNonLocked());
         assertTrue(userDetails.isAccountNonExpired());
         assertTrue(userDetails.isEnabled());
         assertTrue(userDetails.isCredentialsNonExpired());
+        verify(userRepository).findByUsername(any(String.class));
     }
 
     @Test(expected = UsernameNotFoundException.class)
     public void testLoadUserByUsername_userNotFound() {
-        when(this.userRepository.findByUsername(any(String.class))).thenReturn(null);
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername("username");
+        when(userRepository.findByUsername(any(String.class))).thenReturn(null);
+        UserDetails userDetails = userDetailsService.loadUserByUsername("username");
         assertNull(userDetails);
+        verify(userRepository).findByUsername(any(String.class));
     }
+
 }
