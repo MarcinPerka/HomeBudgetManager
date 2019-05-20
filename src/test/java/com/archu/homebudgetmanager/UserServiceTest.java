@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.service;
+package com.archu.homebudgetmanager;
 
 
 import com.archu.homebudgetmanager.exception.UserAlreadyExistAuthenticationException;
@@ -91,12 +91,21 @@ public class UserServiceTest {
 
     @Test
     public void testCreateUser() throws UserAlreadyExistAuthenticationException {
+        doAnswer((i) -> {
+            System.out.println("Created");
+            return null;
+        }).when(userRepository).save(any(User.class));
         userService.createUser(user1);
         verify(userRepository).save(any(User.class));
+
     }
 
     @Test
     public void testDeleteUserById() {
+        doAnswer((i) -> {
+            System.out.println("Deleted");
+            return "null";
+        }).when(userRepository).deleteById(anyLong());
         userService.deleteUserById(anyLong());
         verify(userRepository).deleteById(anyLong());
     }
@@ -107,6 +116,10 @@ public class UserServiceTest {
         ReflectionTestUtils.setField(updatedUser, "id", 1L);
 
         when(userRepository.findById(user1.getId())).thenReturn(Optional.ofNullable(user1));
+        doAnswer((i) -> {
+            System.out.println("Updated");
+            return null;
+        }).when(userRepository).save(any(User.class));
         userService.updateUser(updatedUser, user1.getId());
         verify(userRepository).findById(anyLong());
         verify(userRepository).save(any(User.class));

@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.service;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.model.Expenditure;
 import com.archu.homebudgetmanager.model.User;
@@ -101,6 +101,7 @@ public class ExpenditureServiceTest {
         expendituresByCategory.put("FOOD", expenditure1.getAmount());
         expendituresByCategory.put("UNCATEGORIZED", expenditure3.getAmount());
         expendituresByCategory.put("UNCATEGORIZED", expendituresByCategory.get(expenditure4.getAmount()));
+
         when(expenditureRepository.findByUserIdAndMonth(user.getId(), 10)).thenReturn(expenditures);
         Map<String, BigDecimal> found = expenditureService.getSumOfExpendituresByMonthAndCategory(1L, 10);
         assertThat(found).isEqualTo(expendituresByCategory);
@@ -132,12 +133,20 @@ public class ExpenditureServiceTest {
 
     @Test
     public void testAddExpenditure() {
+        doAnswer((i) -> {
+            System.out.println("Created");
+            return null;
+        }).when(expenditureRepository).save(any(Expenditure.class));
         expenditureService.addExpenditure(expenditure1);
         verify(expenditureRepository).save(any(Expenditure.class));
     }
 
     @Test
     public void testDeleteExpenditureById() {
+        doAnswer((i) -> {
+            System.out.println("Deleted");
+            return null;
+        }).when(expenditureRepository).deleteById(anyLong());
         expenditureService.deleteExpenditureById(user.getId(), expenditure1.getId());
         verify(expenditureRepository).deleteById(anyLong());
     }
@@ -148,6 +157,10 @@ public class ExpenditureServiceTest {
         ReflectionTestUtils.setField(updatedExpenditure, "id", 1L);
 
         when(expenditureRepository.findById(expenditure1.getId())).thenReturn(Optional.of(expenditure1));
+        doAnswer((i) -> {
+            System.out.println("Updated");
+            return null;
+        }).when(expenditureRepository).save(any(Expenditure.class));
         expenditureService.updateExpenditure(updatedExpenditure, user.getId());
         verify(expenditureRepository).findById(anyLong());
         verify(expenditureRepository).save(any(Expenditure.class));

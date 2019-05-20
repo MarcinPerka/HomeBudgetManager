@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.service;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.model.Income;
 import com.archu.homebudgetmanager.model.User;
@@ -126,17 +126,25 @@ public class IncomeServiceTest {
         when(incomeRepository.findSumOfIncomesByMonth(user.getId(), 10)).thenReturn(sum);
         BigDecimal found = incomeService.getSumOfIncomesByMonth(1L, 10);
         assertThat(found).isEqualTo(sum);
-        verify(incomeRepository).findSumOfIncomesByMonth(anyLong(),anyInt());
+        verify(incomeRepository).findSumOfIncomesByMonth(anyLong(), anyInt());
     }
 
     @Test
     public void testAddIncome() {
+        doAnswer((i) -> {
+            System.out.println("Created");
+            return null;
+        }).when(incomeRepository).save(any(Income.class));
         incomeService.addIncome(income1);
         verify(incomeRepository).save(any(Income.class));
     }
 
     @Test
     public void testDeleteIncomeById() {
+        doAnswer((i) -> {
+            System.out.println("Deleted");
+            return null;
+        }).when(incomeRepository).deleteById(anyLong());
         incomeService.deleteIncomeById(user.getId(), income1.getId());
         verify(incomeRepository).deleteById(anyLong());
     }
@@ -147,6 +155,10 @@ public class IncomeServiceTest {
         ReflectionTestUtils.setField(updatedIncome, "id", 1L);
 
         when(incomeRepository.findById(income1.getId())).thenReturn(Optional.of(income1));
+        doAnswer((i) -> {
+            System.out.println("Updated");
+            return null;
+        }).when(incomeRepository).save(any(Income.class));
         incomeService.updateIncome(updatedIncome, user.getId());
         verify(incomeRepository).findById(anyLong());
         verify(incomeRepository).save(any(Income.class));

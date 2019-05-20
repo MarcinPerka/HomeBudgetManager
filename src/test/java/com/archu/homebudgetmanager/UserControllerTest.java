@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.controller;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.controller.UserController;
 import com.archu.homebudgetmanager.exception.UserAlreadyExistAuthenticationException;
@@ -64,12 +64,12 @@ public class UserControllerTest {
 
     @Test
     public void testGetUser() throws Exception {
+
         when(userService.getUserById(user1.getId())).thenReturn(user1);
         mockMvc.perform(get("/user/{userId}", 1)
                 .content(objectMapper.writeValueAsString(user1))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
 
         when(userService.getUserById(user2.getId())).thenReturn(user2);
         mockMvc.perform(get("/user/{userId}", 2)
@@ -82,8 +82,10 @@ public class UserControllerTest {
 
     @Test
     public void testRegisterUser() throws Exception {
-        doNothing().when(userService).createUser(any(User.class));
-
+        doAnswer((i) -> {
+            System.out.println("Created");
+            return null;
+        }).when(userService).createUser(any(User.class));
         mockMvc.perform(post("/registration")
                 .content(objectMapper.writeValueAsString(any(User.class)))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -103,8 +105,10 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        doNothing().when(userService).updateUser(any(User.class), anyLong());
-
+        doAnswer((i) -> {
+            System.out.println("Updated");
+            return null;
+        }).when(userService).updateUser(any(User.class), anyLong());
         mockMvc.perform(put("/user/{userId}", eq(anyLong()))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -113,8 +117,10 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteUser() throws Exception {
-        doNothing().when(userService).deleteUserById(anyLong());
-
+        doAnswer((i) -> {
+            System.out.println("Deleted");
+            return null;
+        }).when(userService).deleteUserById(anyLong());
         mockMvc.perform(delete("/user/{userId}", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

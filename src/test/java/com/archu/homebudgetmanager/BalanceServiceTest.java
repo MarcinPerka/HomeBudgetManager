@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.service;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.model.Expenditure;
 import com.archu.homebudgetmanager.model.Income;
@@ -116,8 +116,8 @@ public class BalanceServiceTest {
         when(expenditureRepository.findSumOfExpendituresByUserIdAndMonth(user.getId(), 10)).thenReturn(expendituresSum);
         BigDecimal found = balanceService.getBalanceByMonth(user.getId(), 10);
         assertThat(found).isEqualTo(balance);
-        verify(incomeRepository).findSumOfIncomesByMonth(anyLong(),anyInt());
-        verify(expenditureRepository).findSumOfExpendituresByUserIdAndMonth(anyLong(),anyInt());
+        verify(incomeRepository).findSumOfIncomesByMonth(anyLong(), anyInt());
+        verify(expenditureRepository).findSumOfExpendituresByUserIdAndMonth(anyLong(), anyInt());
     }
 
     @Test

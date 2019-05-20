@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.controller;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.controller.BalanceController;
 import com.archu.homebudgetmanager.model.Expenditure;
@@ -117,7 +117,7 @@ public class BalanceControllerTest {
                 .content(objectMapper.writeValueAsString(balance))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        verify(balanceService).getBalanceByMonth(anyLong(),anyInt());
+        verify(balanceService).getBalanceByMonth(anyLong(), anyInt());
     }
 
     @Test

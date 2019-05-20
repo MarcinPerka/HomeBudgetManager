@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.service;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.model.User;
 import com.archu.homebudgetmanager.repository.UserRepository;

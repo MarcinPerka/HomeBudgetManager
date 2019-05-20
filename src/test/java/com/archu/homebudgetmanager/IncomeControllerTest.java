@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.controller;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.controller.IncomeController;
 import com.archu.homebudgetmanager.model.Income;
@@ -135,7 +135,6 @@ public class IncomeControllerTest {
 
     @Test
     public void testGetSumOfIncomesByMonthAndCategory() throws Exception {
-        List<Income> incomes = new ArrayList<>(Arrays.asList(income1, income2, income3, income4));
         Map<String, BigDecimal> incomesByCategory = new HashMap<>();
         incomesByCategory.put("PARENTS", income1.getAmount());
         incomesByCategory.put("WORK", income2.getAmount().add(income3.getAmount()));
@@ -163,8 +162,10 @@ public class IncomeControllerTest {
 
     @Test
     public void testAddIncome() throws Exception {
-        doNothing().when(incomeService).addIncome(any(Income.class));
-
+        doAnswer((i) -> {
+            System.out.println("Created");
+            return null;
+        }).when(incomeService).addIncome(any(Income.class));
         mockMvc.perform(post("/user/{userId}/incomes/", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -173,8 +174,10 @@ public class IncomeControllerTest {
 
     @Test
     public void testUpdateIncome() throws Exception {
-        doNothing().when(incomeService).updateIncome(any(Income.class), anyLong());
-
+        doAnswer((i) -> {
+            System.out.println("Updated");
+            return null;
+        }).when(incomeService).updateIncome(any(Income.class), anyLong());
         mockMvc.perform(put("/user/{userId}/incomes/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -183,8 +186,10 @@ public class IncomeControllerTest {
 
     @Test
     public void testDeleteIncome() throws Exception {
-        doNothing().when(incomeService).deleteIncomeById(anyLong(), anyLong());
-
+        doAnswer((i) -> {
+            System.out.println("Deleted");
+            return null;
+        }).when(incomeService).deleteIncomeById(anyLong(), anyLong());
         mockMvc.perform(delete("/user/{userId}/incomes/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

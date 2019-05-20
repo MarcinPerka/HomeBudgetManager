@@ -1,4 +1,4 @@
-package com.archu.homebudgetmanager.controller;
+package com.archu.homebudgetmanager;
 
 import com.archu.homebudgetmanager.controller.ExpenditureController;
 import com.archu.homebudgetmanager.model.Expenditure;
@@ -23,7 +23,6 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -72,7 +71,6 @@ public class ExpenditureControllerTest {
         expenditure4 = new Expenditure("Stuff", new BigDecimal(-10.12), new Date(2019, 10, 10), Expenditure.ExpenditureCategory.UNCATEGORIZED);
         expenditure4.setUser(user);
         ReflectionTestUtils.setField(expenditure4, "id", 4L);
-
     }
 
     @Test
@@ -81,8 +79,7 @@ public class ExpenditureControllerTest {
         mockMvc.perform(get("/user/{userId}/expenditures/{id}", 1, 1)
                 .content(objectMapper.writeValueAsString(expenditure1))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(expenditure1.getTitle()));
+                .andExpect(status().isOk());
         verify(expenditureService).getExpenditureById(anyLong(), anyLong());
     }
 
@@ -139,7 +136,6 @@ public class ExpenditureControllerTest {
 
     @Test
     public void testGetSumOfExpendituresByMonthAndCategory() throws Exception {
-        List<Expenditure> expenditures = new ArrayList<>(Arrays.asList(expenditure1, expenditure3, expenditure4));
         Map<String, BigDecimal> expendituresByCategory = new HashMap<>();
         expendituresByCategory.put("FOOD", expenditure1.getAmount());
         expendituresByCategory.put("UNCATEGORIZED", expenditure3.getAmount());
@@ -167,8 +163,10 @@ public class ExpenditureControllerTest {
 
     @Test
     public void testAddExpenditure() throws Exception {
-        doNothing().when(expenditureService).addExpenditure(any(Expenditure.class));
-
+        doAnswer((i) -> {
+            System.out.println("Created");
+            return null;
+        }).when(expenditureService).addExpenditure(any(Expenditure.class));
         mockMvc.perform(post("/user/{userId}/expenditures/", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -177,8 +175,10 @@ public class ExpenditureControllerTest {
 
     @Test
     public void testUpdateExpenditure() throws Exception {
-        doNothing().when(expenditureService).updateExpenditure(any(Expenditure.class), anyLong());
-
+        doAnswer((i) -> {
+            System.out.println("Updated");
+            return null;
+        }).when(expenditureService).updateExpenditure(any(Expenditure.class), anyLong());
         mockMvc.perform(put("/user/{userId}/expenditures/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -187,12 +187,14 @@ public class ExpenditureControllerTest {
 
     @Test
     public void testDeleteExpenditure() throws Exception {
-        doNothing().when(expenditureService).deleteExpenditureById(anyLong(), anyLong());
-
+        doAnswer((i) -> {
+            System.out.println("Deleted");
+            return null;
+        }).when(expenditureService).deleteExpenditureById(anyLong(), anyLong());
         mockMvc.perform(delete("/user/{userId}/expenditures/{id}", anyLong(), anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        verify(expenditureService).deleteExpenditureById(anyLong(),anyLong());
+        verify(expenditureService).deleteExpenditureById(anyLong(), anyLong());
     }
 }
 
