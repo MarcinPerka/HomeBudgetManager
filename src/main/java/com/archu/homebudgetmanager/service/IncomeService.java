@@ -97,7 +97,7 @@ public class IncomeService {
             incomeToUpdate.setAmount(income.getAmount());
             incomeToUpdate.setDateOfTransaction(income.getDateOfTransaction());
             incomeToUpdate.setIncomeCategory(income.getIncomeCategory());
-            incomeRepository.save(income);
+            incomeRepository.save(incomeToUpdate);
         }
     }
 }
