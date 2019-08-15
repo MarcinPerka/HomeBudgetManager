@@ -10,11 +10,12 @@ The API allows:
 
 ## Technology stack
 - Spring Boot
-- Spring Data JPA
 - Spring Security
 - Hibernate
 - MySQL
 - REST
 - Maven
+- JUnit
+- Mockito
 
 
